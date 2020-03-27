@@ -37,6 +37,7 @@ namespace
 {
 
 constexpr const char* SETTING_VIDEOPLAYER_USEPRIMEDECODERFORHW{"videoplayer.useprimedecoderforhw"};
+constexpr const char* SETTING_VIDEOPLAYER_DISABLENONHEVC{"videoplayer.disablenonhevc"};
 
 static void ReleaseBuffer(void* opaque, uint8_t* data)
 {
@@ -100,6 +101,7 @@ void CDVDVideoCodecDRMPRIME::Register()
 
   settings->GetSetting(CSettings::SETTING_VIDEOPLAYER_USEPRIMEDECODER)->SetVisible(true);
   settings->GetSetting(SETTING_VIDEOPLAYER_USEPRIMEDECODERFORHW)->SetVisible(true);
+  settings->GetSetting(SETTING_VIDEOPLAYER_DISABLENONHEVC)->SetVisible(true);
 
   CDVDFactoryCodec::RegisterHWVideoCodec("drm_prime", CDVDVideoCodecDRMPRIME::Create);
 }
@@ -121,6 +123,9 @@ static const AVCodecHWConfig* FindHWConfig(const AVCodec* codec)
 {
   if (!CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(
           SETTING_VIDEOPLAYER_USEPRIMEDECODERFORHW))
+    return nullptr;
+  if (CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(
+          SETTING_VIDEOPLAYER_DISABLENONHEVC) && codec->id != AV_CODEC_ID_HEVC)
     return nullptr;
 
   const AVCodecHWConfig* config = nullptr;
