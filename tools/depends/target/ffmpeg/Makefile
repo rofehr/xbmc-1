@@ -70,7 +70,7 @@ ifeq ($(Configuration), Release)
   ffmpg_config += --disable-debug
 endif
 
-ffmpg_config += --enable-rpi
+ffmpg_config += --enable-rpi --arch=armv6t2
 
 all: .installed-$(PLATFORM)
 
